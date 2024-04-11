@@ -31,8 +31,11 @@
     "not < 0.25%"
   ],
   "lint-staged": {
-    "*.ts": ["npm run lint", "npm run ci:format"],
-    "*.scss": "npm run stylelint"
+    "*.ts": [
+      "eslint",
+      "prettier --check"
+    ],
+    "*.scss": "stylelint"
   },
   "license": "ISC",
   "devDependencies": {

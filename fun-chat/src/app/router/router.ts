@@ -1,4 +1,5 @@
-import { Page } from './pages';
+import type SessionStorage from '../utils/session-storage';
+import Page from './pages';
 
 export type Route = {
   path: Page;
@@ -8,8 +9,11 @@ export type Route = {
 export default class Router {
   private validRoutes: Route[];
 
-  constructor(routes: Route[]) {
+  private storage: SessionStorage;
+
+  constructor(routes: Route[], storage: SessionStorage) {
     this.validRoutes = routes;
+    this.storage = storage;
 
     window.addEventListener('hashchange', this.navigate);
     document.addEventListener('DOMContentLoaded', this.navigate);
@@ -28,8 +32,14 @@ export default class Router {
   private urlChangeHandler(newUrl: string): void {
     const validRoute = this.validRoutes.find((route) => String(route.path) === newUrl);
 
-    if (!validRoute) {
-      this.redirectToGaragePage();
+    if (!validRoute || (validRoute.path === Page.CHAT && !this.storage.getAuthData())) {
+      this.redirectToPage(Page.LOGIN);
+
+      return;
+    }
+
+    if ([Page.EMPTY, Page.LOGIN].includes(validRoute.path) && this.storage.getAuthData()) {
+      this.redirectToPage(Page.CHAT);
 
       return;
     }
@@ -37,11 +47,11 @@ export default class Router {
     validRoute.handleRouteChange();
   }
 
-  private redirectToGaragePage(): void {
-    const garagePageRoute = this.validRoutes.find((route) => route.path === Page.GARAGE);
+  private redirectToPage(pagePath: Page): void {
+    const pageRoute = this.validRoutes.find((route) => route.path === pagePath);
 
-    if (garagePageRoute) {
-      this.navigate(garagePageRoute.path);
+    if (pageRoute) {
+      this.navigate(pageRoute.path);
     }
   }
 }
