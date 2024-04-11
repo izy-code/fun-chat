@@ -1,0 +1,89 @@
+@use "sass:color";
+@use "../../../global-styles/forward" as *;
+
+.button {
+  padding: 0.5em 1.2em;
+  font-family: $font-primary;
+  font-size: 1em;
+  font-weight: 500;
+  text-decoration: none;
+  color: $color-black;
+  background-color: $color-sandy-brown;
+  border: none;
+  border-radius: 4px;
+  box-shadow:
+    0 8px 16px 0 rgb(0 0 0 / 20%),
+    0 6px 20px 0 rgb(0 0 0 / 19%);
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 0.6s ease-out,
+    color 0.6s ease-out,
+    box-shadow 0.6s ease-out;
+
+  &:disabled,
+  &--disabled {
+    color: color.adjust($color-black-olive, $alpha: -0.4);
+    background-color: color.adjust($color-bone, $alpha: -0.4);
+    box-shadow: none;
+    cursor: default;
+  }
+
+  &:hover:not(:is(:disabled, .button--disabled)),
+  &:focus-visible:not(:is(:disabled, .button--disabled)) {
+    @include media-hover {
+      background-color: $color-pastel-yellow;
+    }
+  }
+
+  &:active:not(:is(:disabled, .button--disabled)) {
+    color: $color-black;
+    background-color: $color-chinese-bronze;
+    box-shadow: none;
+  }
+
+  &--cancel {
+    background-color: $color-light-red;
+
+    &:hover:not(:is(:disabled, .button--disabled)),
+    &:focus-visible:not(:is(:disabled, .button--disabled)) {
+      @include media-hover {
+        background-color: $color-red;
+      }
+    }
+
+    &:active:not(:is(:disabled, .button--disabled)) {
+      background-color: $color-dark-red;
+    }
+  }
+
+  &--confirm {
+    background-color: $color-iguana-green;
+
+    &:hover:not(:is(:disabled, .button--disabled)),
+    &:focus-visible:not(:is(:disabled, .button--disabled)) {
+      @include media-hover {
+        background-color: $color-green;
+      }
+    }
+
+    &:active:not(:is(:disabled, .button--disabled)) {
+      background-color: $color-dark-green;
+    }
+  }
+
+  &--continue {
+    background-color: $color-light-blue;
+
+    &:hover:not(:is(:disabled, .button--disabled)),
+    &:focus-visible:not(:is(:disabled, .button--disabled)) {
+      @include media-hover {
+        background-color: $color-blue;
+      }
+    }
+
+    &:active:not(:is(:disabled, .button--disabled)) {
+      background-color: $color-dark-blue;
+    }
+  }
+}
