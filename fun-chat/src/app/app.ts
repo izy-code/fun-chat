@@ -4,6 +4,7 @@ import Router, { type Route } from './router/router';
 import Page from './router/pages';
 import { div } from './components/tags';
 import SessionStorage from './utils/session-storage';
+import type PageComponent from './components/page-component';
 
 const COMPONENT_RENEWAL_TRANSITION_TIME_MS = 600;
 const OPACITY_TRANSITION_TIME_MS = 700;
@@ -28,63 +29,37 @@ export default class App {
   private createRoutes = (): Route[] => [
     {
       path: Page.EMPTY,
-      handleRouteChange: () => this.handleSwitchToPage('@/app/pages/login/login-page'),
+      handleRouteChange: () => this.handleSwitchToPage(() => import(`@/app/pages/login/login-page`)),
     },
     {
       path: Page.LOGIN,
-      handleRouteChange: () => this.handleSwitchToPage('@/app/pages/login/login-page'),
+      handleRouteChange: () => this.handleSwitchToPage(() => import(`@/app/pages/login/login-page`)),
     },
     {
       path: Page.ABOUT,
-      handleRouteChange: () => this.handleSwitchToPage('@/app/pages/about/about-page'),
+      handleRouteChange: () => this.handleSwitchToPage(() => import('@/app/pages/about/about-page')),
     },
-    {
-      path: Page.CHAT,
-      handleRouteChange: () => this.handleSwitchToPage('@/app/pages/chat/chat-page'),
-    },
+    // {
+    //   path: Page.CHAT,
+    //   handleRouteChange: () => this.handleSwitchToPage(() => import('@/app/pages/chat/chat-page')),
+    // },
   ];
 
-  // private handleSwitchToLoginPage = (): void => {
-  //   import('@/app/pages/login/login-page')
-  //     .then(({ default: LoginPageComponent }) => {
-  //       this.setPage(LoginPageComponent);
-  //     })
-  //     .catch((error) => {
-  //       throw new Error(`Failed to load login page module: ${error}`);
-  //     });
-  // };
+  private handleSwitchToPage = (importModule: () => Promise<unknown>): void => {
+    importModule()
+      .then((importedModule) => {
+        const { default: PageClass } = importedModule as {
+          default: new (router: Router, storage: SessionStorage) => PageComponent;
+        };
 
-  // private handleSwitchToAboutPage = (): void => {
-  //   import('@/app/pages/about/about-page')
-  //     .then(({ default: AboutPageComponent }) => {
-  //       this.setPage(AboutPageComponent);
-  //     })
-  //     .catch((error) => {
-  //       throw new Error(`Failed to load about page module: ${error}`);
-  //     });
-  // };
-
-  // private handleSwitchToChatPage = (): void => {
-  //   import('@/app/pages/chat/chat-page')
-  //     .then(({ default: ChatPageComponent }: { default: BaseComponent }) => {
-  //       this.setPage(ChatPageComponent);
-  //     })
-  //     .catch((error) => {
-  //       throw new Error(`Failed to load chat page module: ${error}`);
-  //     });
-  // };
-
-  private handleSwitchToPage = (pageComponentPath: string): void => {
-    import(pageComponentPath)
-      .then(({ default: pageComponent }: { default: BaseComponent }) => {
-        this.setPage(pageComponent);
+        this.setPage(new PageClass(this.router, this.storage));
       })
       .catch((error) => {
         throw new Error(`Failed to load page module: ${error}`);
       });
   };
 
-  private setPage(pageComponent: BaseComponent): void {
+  private setPage(pageComponent: PageComponent): void {
     this.container.removeClass('app-container--opaque');
 
     setTimeout(() => {
