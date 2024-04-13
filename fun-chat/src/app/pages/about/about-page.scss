@@ -1,0 +1,74 @@
+@use "../../../global-styles/forward" as *;
+
+.about-page__main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 560px;
+  padding: 40px;
+  background-color: $color-anti-flash-white;
+  border-radius: 30px;
+  box-shadow: 0 5px 10px 10px rgb(0 0 0 / 20%);
+}
+
+.about-page__heading {
+  margin: 0;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 10px $color-iguana-green,
+    0 0 10px $color-iguana-green,
+    0 0 20px $color-iguana-green;
+  color: $color-dark-green;
+}
+
+.about-page__description {
+  margin: 0;
+  text-align: center;
+  white-space: pre-line;
+}
+
+.about-page__git-link {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: fit-content;
+  font-size: 20px;
+  line-height: 1.25;
+  font-weight: 600;
+  text-decoration: none;
+  color: $color-black-olive;
+  transition: color 0.6s ease-in-out;
+
+  &::before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    background-color: $color-black-olive;
+    transition: background-color 0.6s ease-in-out;
+    mask-image: url("../../../assets/icons/github-mark.svg");
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+
+  &:hover,
+  &:focus-visible {
+    @include media-hover {
+      color: $color-dark-blue;
+
+      &::before {
+        background-color: $color-dark-blue;
+      }
+    }
+  }
+}
+
+.about-page .about-page__return-link {
+  font-size: 22px;
+  font-weight: 600;
+}
