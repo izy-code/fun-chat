@@ -32,26 +32,22 @@ export default class Router {
   private urlChangeHandler(newUrl: string): void {
     const validRoute = this.validRoutes.find((route) => String(route.path) === newUrl);
 
-    if (!validRoute || (validRoute.path === Page.CHAT && !this.storage.getAuthData())) {
-      this.redirectToPage(Page.LOGIN);
+    if (
+      !validRoute ||
+      validRoute.path === Page.EMPTY ||
+      (validRoute.path === Page.CHAT && !this.storage.getAuthData())
+    ) {
+      window.location.hash = `#${Page.LOGIN}`;
 
       return;
     }
 
-    if ([Page.EMPTY, Page.LOGIN].includes(validRoute.path) && this.storage.getAuthData()) {
-      this.redirectToPage(Page.CHAT);
+    if (validRoute.path === Page.LOGIN && this.storage.getAuthData()) {
+      window.location.hash = `#${Page.CHAT}`;
 
       return;
     }
 
     validRoute.handleRouteChange();
-  }
-
-  private redirectToPage(pagePath: Page): void {
-    const pageRoute = this.validRoutes.find((route) => route.path === pagePath);
-
-    if (pageRoute) {
-      this.navigate(pageRoute.path);
-    }
   }
 }
