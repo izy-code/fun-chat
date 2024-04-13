@@ -17,6 +17,12 @@
   border: 2px solid $color-granite;
   border-radius: 4px;
 
+  &:hover {
+    @include media-hover {
+      border-color: $color-black-olive;
+    }
+  }
+
   &:focus {
     outline: 2px solid $color-granite;
   }
@@ -28,6 +34,6 @@
 
 .login-field__error-text {
   font-size: 18px;
-  white-space: pre;
+  white-space: pre-line;
   color: $color-red;
 }
