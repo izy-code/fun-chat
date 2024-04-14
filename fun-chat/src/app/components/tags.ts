@@ -12,6 +12,9 @@ export const nav = (props: TagProps, ...children: ChildrenType[]): BaseComponent
 export const div = (props: TagProps<HTMLDivElement>, ...children: ChildrenType[]): BaseComponent<HTMLDivElement> =>
   new BaseComponent(props, ...children);
 
+export const section = (props: TagProps, ...children: ChildrenType[]): BaseComponent =>
+  new BaseComponent({ ...props, tag: 'section' }, ...children);
+
 export const p = (props: TagProps, ...children: ChildrenType[]): BaseComponent<HTMLParagraphElement> =>
   new BaseComponent({ ...props, tag: 'p' }, ...children);
 
