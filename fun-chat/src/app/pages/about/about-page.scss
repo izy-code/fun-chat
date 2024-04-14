@@ -1,5 +1,9 @@
 @use "../../../global-styles/forward" as *;
 
+.about-page {
+  justify-content: center;
+}
+
 .about-page__main {
   display: flex;
   flex-direction: column;
@@ -40,7 +44,6 @@
   font-size: 20px;
   line-height: 1.25;
   font-weight: 600;
-  text-decoration: none;
   color: $color-black-olive;
   transition: color 0.6s ease-in-out;
 
