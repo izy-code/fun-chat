@@ -25,7 +25,7 @@ export default class SessionStorage {
   }
 
   private getField<T>(key: string): T | null {
-    if (this.dataMap.has(key)) {
+    if (sessionStorage.getItem(APP_KEY) && this.dataMap.has(key)) {
       return this.dataMap.get(key) as T;
     }
 
