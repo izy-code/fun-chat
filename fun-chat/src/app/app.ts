@@ -39,10 +39,10 @@ export default class App {
       path: Page.ABOUT,
       handleRouteChange: () => this.handleSwitchToPage(() => import('@/app/pages/about/about-page')),
     },
-    // {
-    //   path: Page.CHAT,
-    //   handleRouteChange: () => this.handleSwitchToPage(() => import('@/app/pages/chat/chat-page')),
-    // },
+    {
+      path: Page.CHAT,
+      handleRouteChange: () => this.handleSwitchToPage(() => import('@/app/pages/chat/chat-page')),
+    },
   ];
 
   private handleSwitchToPage = (importModule: () => Promise<unknown>): void => {
