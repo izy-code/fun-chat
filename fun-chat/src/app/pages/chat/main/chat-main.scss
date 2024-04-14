@@ -1,0 +1,30 @@
+@use "../../../../global-styles/forward" as *;
+
+.chat-page__main {
+  display: flex;
+  flex-grow: 1;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.chat-page__users,
+.chat-page__dialogue {
+  height: 100%;
+  padding: 10px 20px;
+  background-color: $color-anti-flash-white;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px 10px rgb(0 0 0 / 20%);
+
+  @media (width <= 520px) {
+    padding: 10px;
+  }
+}
+
+.chat-page__users {
+  width: 35%;
+}
+
+.chat-page__dialogue {
+  flex-grow: 1;
+}
