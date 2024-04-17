@@ -1,4 +1,4 @@
-import type { AuthData } from '../interfaces';
+import type { User } from '../interfaces';
 
 const APP_KEY = 'izy-fun-chat';
 const AUTH_DATA_KEY = 'authData';
@@ -11,11 +11,11 @@ export default class SessionStorage {
     this.getData();
   }
 
-  public getAuthData(): AuthData | null {
-    return this.getField<AuthData>(AUTH_DATA_KEY);
+  public getAuthData(): User | null {
+    return this.getField<User>(AUTH_DATA_KEY);
   }
 
-  public setAuthData(authData: AuthData): void {
+  public setAuthData(authData: User): void {
     this.setField(AUTH_DATA_KEY, authData);
   }
 
