@@ -1,19 +1,14 @@
 import type SessionStorage from '../utils/session-storage';
 import Page from './pages';
 
-export type Route = {
-  path: Page;
-  handleRouteChange: () => void;
-};
-
 export default class Router {
-  private validRoutes: Route[];
-
   private storage: SessionStorage;
 
-  constructor(routes: Route[], storage: SessionStorage) {
-    this.validRoutes = routes;
+  private handleRouteChange: (page: Page) => void;
+
+  constructor(storage: SessionStorage, handleRouteChange: (page: Page) => void) {
     this.storage = storage;
+    this.handleRouteChange = handleRouteChange;
 
     window.addEventListener('hashchange', this.navigate);
     document.addEventListener('DOMContentLoaded', this.navigate);
@@ -30,24 +25,20 @@ export default class Router {
   };
 
   private urlChangeHandler(newUrl: string): void {
-    const validRoute = this.validRoutes.find((route) => String(route.path) === newUrl);
+    const validPath = Object.values(Page).find((page) => page.toString() === newUrl);
 
-    if (
-      !validRoute ||
-      validRoute.path === Page.EMPTY ||
-      (validRoute.path === Page.CHAT && !this.storage.getAuthData())
-    ) {
+    if (!validPath || (validPath === Page.CHAT && !this.storage.getAuthData())) {
       window.location.hash = `#${Page.LOGIN}`;
 
       return;
     }
 
-    if (validRoute.path === Page.LOGIN && this.storage.getAuthData()) {
+    if (validPath === Page.LOGIN && this.storage.getAuthData()) {
       window.location.hash = `#${Page.CHAT}`;
 
       return;
     }
 
-    validRoute.handleRouteChange();
+    this.handleRouteChange(validPath);
   }
 }
