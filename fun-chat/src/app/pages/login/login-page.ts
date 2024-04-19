@@ -3,10 +3,13 @@ import type BaseComponent from '@/app/components/base-component';
 import { a, form, h1, main } from '@/app/components/tags';
 import ButtonComponent from '@/app/components/button/button';
 import LoginFieldComponent from './login-field/login-field';
-import type LocalStorage from '@/app/utils/session-storage';
 import type Router from '@/app/router/router';
 import Pages from '@/app/router/pages';
 import PageComponent from '@/app/components/page-component';
+import ModalComponent from '@/app/components/modal/modal';
+import { createSocketMessage } from '@/app/utils/helpers';
+import SocketMessageType from '@/app/enums';
+import AuthController from '@/app/common/auth-controller';
 
 enum FieldMinLength {
   LOGIN = 3,
@@ -36,20 +39,20 @@ export default class LoginPageComponent extends PageComponent {
 
   private passwordField: LoginFieldComponent;
 
-  constructor(router: Router, storage: LocalStorage) {
-    super(router, storage);
+  constructor(router: Router) {
+    super(router);
 
     this.addClass('login-page');
 
     this.loginField = new LoginFieldComponent('Login:');
     this.loginField.addClass('login-page__field');
     this.loginField.setInputAttribute('autofocus', '');
+    this.loginField.setInputAttribute('autocomplete', 'username');
     this.loginField.addListener('input', this.onFieldInput.bind(this));
-
     this.passwordField = new LoginFieldComponent('Password:');
     this.passwordField.addClass('login-page__field');
+    this.passwordField.setInputAttribute('autocomplete', 'current-password');
     this.passwordField.addListener('input', this.onFieldInput.bind(this));
-
     this.loginButton = ButtonComponent({
       className: 'login-page__submit-button button',
       textContent: 'Login',
@@ -63,7 +66,6 @@ export default class LoginPageComponent extends PageComponent {
       href: `#${Pages.ABOUT}`,
       textContent: `About`,
     });
-
     const headingComponent = h1('visually-hidden', 'Fun chat application');
     const formComponent = form(
       { className: 'login-page__form', method: 'post' },
@@ -73,8 +75,9 @@ export default class LoginPageComponent extends PageComponent {
       aboutLink,
     );
     const mainComponent = main({ className: 'login-page__main' }, headingComponent, formComponent);
+    const modal = new ModalComponent();
 
-    this.append(mainComponent);
+    this.appendChildren([mainComponent, modal]);
   }
 
   private onFieldInput(evt: Event): void {
@@ -165,11 +168,13 @@ export default class LoginPageComponent extends PageComponent {
       evt.preventDefault();
     }
 
-    this.storage.setAuthData({
+    const authData = {
       login: this.loginField.getInputValue(),
       password: this.passwordField.getInputValue(),
-    });
+    };
 
-    this.router.navigate(Pages.CHAT);
+    const authSocketMessage = createSocketMessage({ user: authData }, SocketMessageType.LOGIN_CURRENT);
+
+    AuthController.loginHandler(authSocketMessage);
   };
 }
