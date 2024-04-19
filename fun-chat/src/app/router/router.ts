@@ -1,4 +1,3 @@
-import AuthController from '../common/auth-controller';
 import SessionStorage from '../common/session-storage';
 import Page from './pages';
 
@@ -32,7 +31,7 @@ export default class Router {
     }
 
     if (validPath === Page.LOGIN && SessionStorage.getAuthData()) {
-      AuthController.socketOpenedHandler(true);
+      window.location.hash = `#${Page.CHAT}`;
 
       return;
     }
