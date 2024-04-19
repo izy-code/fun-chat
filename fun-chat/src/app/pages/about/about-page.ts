@@ -1,14 +1,16 @@
 import './about-page.scss';
 import '@/app/components/button/button.scss';
 import { a, h1, main, p } from '@/app/components/tags';
-import type LocalStorage from '@/app/utils/session-storage';
 import type Router from '@/app/router/router';
 import Pages from '@/app/router/pages';
 import PageComponent from '@/app/components/page-component';
+import ModalComponent from '@/app/components/modal/modal';
+import ButtonComponent from '@/app/components/button/button';
+import SessionStorage from '@/app/common/session-storage';
 
 export default class AboutPageComponent extends PageComponent {
-  constructor(router: Router, storage: LocalStorage) {
-    super(router, storage);
+  constructor(router: Router) {
+    super(router);
 
     this.addClass('about-page');
 
@@ -27,14 +29,25 @@ export default class AboutPageComponent extends PageComponent {
       target: '_blank',
     });
 
-    const returnLink = a({
-      className: 'about-page__return-link button button--continue',
-      href: `#${Pages.EMPTY}`,
+    const returnLink = ButtonComponent({
+      className: 'about-page__return-button button button--continue',
       textContent: `Return to previous page`,
+      buttonType: 'button',
+      clickHandler: this.onReturnButtonClick,
     });
 
     const mainComponent = main({ className: 'about-page__main' }, heading, description, gitLink, returnLink);
 
-    this.append(mainComponent);
+    const modal = new ModalComponent();
+
+    this.appendChildren([mainComponent, modal]);
   }
+
+  private onReturnButtonClick = (): void => {
+    if (SessionStorage.getAuthData()) {
+      this.router.navigate(`#${Pages.CHAT}`);
+    } else {
+      this.router.navigate(`#${Pages.LOGIN}`);
+    }
+  };
 }
