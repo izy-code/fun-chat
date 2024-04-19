@@ -1,22 +1,21 @@
-import type CustomEventName from '@/app/events';
+import type CustomEventName from '@/app/custom-events';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Handler<T extends any[] = any[]> = (...args: T) => void | Promise<any>;
+type Handler<T extends unknown[] = unknown[]> = (...args: T) => void | Promise<unknown>;
 
 export default class EventEmitter {
-  private handlers: Record<string, Handler[]> = {};
+  private static handlers: Record<string, Handler[]> = {};
 
-  public on(evt: CustomEventName, handler: Handler): void {
+  public static on<T extends unknown[] = unknown[]>(evt: CustomEventName, handler: Handler<T>): void {
     const currentEventHandlers = this.handlers[evt] || [];
 
     if (currentEventHandlers.length === 0) {
       this.handlers[evt] = currentEventHandlers;
     }
 
-    currentEventHandlers.push(handler);
+    currentEventHandlers.push(handler as Handler);
   }
 
-  public off(evt: CustomEventName, handler: Handler): void {
+  public static off<T extends unknown[] = unknown[]>(evt: CustomEventName, handler: Handler<T>): void {
     const currentEventHandlers = this.handlers[evt];
 
     if (!currentEventHandlers) {
@@ -30,14 +29,13 @@ export default class EventEmitter {
     }
   }
 
-  public emit(evt: CustomEventName, details?: unknown): void {
+  public static emit<T>(evt: CustomEventName, details?: T): void {
     const currentEventHandlers = this.handlers[evt];
 
     if (!currentEventHandlers) {
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     currentEventHandlers.forEach((handler) => handler(details));
   }
 }

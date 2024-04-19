@@ -1,11 +1,11 @@
 import type { SocketMessage } from '../interfaces';
-import State from '../state/state';
+import State from './state';
 
 const BASE_URL = 'ws://127.0.0.1:4000';
 const RESEND_DELAY_MS = 1500;
 
 export default class SocketHandler {
-  private singleInstance = new SocketHandler();
+  private static singleInstance = new SocketHandler();
 
   private socket: WebSocket | null = null;
 
@@ -17,7 +17,7 @@ export default class SocketHandler {
     this.initSocket();
   }
 
-  public getInstance = (): SocketHandler => this.singleInstance;
+  public static getInstance = (): SocketHandler => SocketHandler.singleInstance;
 
   public send = (message: SocketMessage): boolean => {
     if (this.socket !== null && this.socket.readyState === WebSocket.OPEN) {
@@ -54,7 +54,7 @@ export default class SocketHandler {
       State.saveReceivedMessage(parsedMessage);
     });
     openedSocket.addEventListener('close', () => {
-      State.isSocketOpened = false;
+      State.changeSocketState(false);
 
       this.initSocket();
     });
@@ -67,10 +67,10 @@ export default class SocketHandler {
       this.socket = socket;
       this.addListenersToOpenedSocket(socket);
 
-      State.isSocketOpened = true;
+      State.changeSocketState(true);
     });
     socket.addEventListener('error', () => {
-      State.isSocketOpened = false;
+      State.changeSocketState(false);
 
       this.initSocket();
     });
