@@ -4,27 +4,22 @@ const APP_KEY = 'izy-fun-chat';
 const AUTH_DATA_KEY = 'authData';
 
 export default class SessionStorage {
-  private dataMap: Map<string, unknown>;
+  private static dataMap: Map<string, unknown> = new Map();
 
-  constructor() {
-    this.dataMap = new Map();
-    this.getData();
-  }
-
-  public getAuthData(): User | null {
+  public static getAuthData(): User | null {
     return this.getField<User>(AUTH_DATA_KEY);
   }
 
-  public setAuthData(authData: User): void {
+  public static setAuthData(authData: User): void {
     this.setField(AUTH_DATA_KEY, authData);
   }
 
-  public clearAppData(): void {
+  public static clearAppData(): void {
     this.dataMap = new Map();
     sessionStorage.removeItem(APP_KEY);
   }
 
-  private getField<T>(key: string): T | null {
+  private static getField<T>(key: string): T | null {
     if (sessionStorage.getItem(APP_KEY) && this.dataMap.has(key)) {
       return this.dataMap.get(key) as T;
     }
@@ -32,17 +27,17 @@ export default class SessionStorage {
     return null;
   }
 
-  private setField(key: string, value: unknown): void {
+  private static setField(key: string, value: unknown): void {
     this.dataMap.set(key, value);
     this.saveData();
   }
 
-  private deleteField(key: string): void {
+  private static deleteField(key: string): void {
     this.dataMap.delete(key);
     this.saveData();
   }
 
-  private getData(): void {
+  public static getData(): void {
     const storageString = sessionStorage.getItem(APP_KEY);
 
     if (storageString) {
@@ -56,9 +51,11 @@ export default class SessionStorage {
     }
   }
 
-  private saveData(): void {
+  private static saveData(): void {
     const dataObject = Object.fromEntries(this.dataMap.entries());
 
     sessionStorage.setItem(APP_KEY, JSON.stringify(dataObject));
   }
 }
+
+SessionStorage.getData();

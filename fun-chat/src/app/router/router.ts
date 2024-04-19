@@ -1,13 +1,11 @@
-import type SessionStorage from '../utils/session-storage';
+import AuthController from '../common/auth-controller';
+import SessionStorage from '../common/session-storage';
 import Page from './pages';
 
 export default class Router {
-  private storage: SessionStorage;
-
   private handleRouteChange: (page: Page) => void;
 
-  constructor(storage: SessionStorage, handleRouteChange: (page: Page) => void) {
-    this.storage = storage;
+  constructor(handleRouteChange: (page: Page) => void) {
     this.handleRouteChange = handleRouteChange;
 
     window.addEventListener('hashchange', this.navigate);
@@ -27,14 +25,14 @@ export default class Router {
   private urlChangeHandler(newUrl: string): void {
     const validPath = Object.values(Page).find((page) => page.toString() === newUrl);
 
-    if (!validPath || (validPath === Page.CHAT && !this.storage.getAuthData())) {
+    if (!validPath || (validPath === Page.CHAT && !SessionStorage.getAuthData())) {
       window.location.hash = `#${Page.LOGIN}`;
 
       return;
     }
 
-    if (validPath === Page.LOGIN && this.storage.getAuthData()) {
-      window.location.hash = `#${Page.CHAT}`;
+    if (validPath === Page.LOGIN && SessionStorage.getAuthData()) {
+      AuthController.socketOpenedHandler(true);
 
       return;
     }

@@ -3,7 +3,6 @@ import type BaseComponent from './components/base-component';
 import Router from './router/router';
 import Page from './router/pages';
 import { div } from './components/tags';
-import SessionStorage from './utils/session-storage';
 import type PageComponent from './components/page-component';
 
 const COMPONENT_RENEWAL_TRANSITION_TIME_MS = 600;
@@ -19,14 +18,11 @@ const pageImports = {
 export default class App {
   private container: BaseComponent;
 
-  private storage: SessionStorage;
-
   private router: Router;
 
   constructor() {
     this.container = div({ className: 'app-container' });
-    this.storage = new SessionStorage();
-    this.router = new Router(this.storage, this.handleRouteChange);
+    this.router = new Router(this.handleRouteChange);
   }
 
   public start(): void {
@@ -36,7 +32,7 @@ export default class App {
   private handleRouteChange = (page: Page): void => {
     pageImports[page]()
       .then(({ default: PageComponent }) => {
-        this.setPage(new PageComponent(this.router, this.storage));
+        this.setPage(new PageComponent(this.router));
       })
       .catch((error) => {
         throw new Error(`Failed to load page module: ${error}`);
