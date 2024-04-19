@@ -21,14 +21,16 @@ export interface MessageStatus {
   isEdited: boolean;
 }
 
+export interface Payload {
+  user?: User;
+  users?: User[];
+  message?: Message;
+  messages?: Message[];
+  error?: string;
+}
+
 export interface SocketMessage {
   id: string;
   type: SocketMessageType;
-  payload: {
-    user?: User;
-    users?: User[];
-    message?: Message;
-    messages?: Message[];
-    error?: string;
-  } | null;
+  payload: Payload | null;
 }
