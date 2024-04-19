@@ -6,26 +6,27 @@ import { createSocketMessage } from '../utils/helpers';
 import SessionStorage from './session-storage';
 import EventEmitter from './event-emitter';
 import SocketHandler from './socket-handler';
+import ContactsController from './contacts-controller';
 
 const socketHandler = SocketHandler.getInstance();
 
 export default class AuthController {
-  public static loginHandler = (authSocketMessage: SocketMessage): void => {
-    const authReceiveHandler = AuthController.createAuthReceiveHandler(authSocketMessage);
+  public static loginHandler = (authRequest: SocketMessage): void => {
+    const authResponseHandler = AuthController.createAuthResponseHandler(authRequest);
 
-    EventEmitter.on(CustomEventName.SOCKET_MSG_RECEIVED, authReceiveHandler);
-    socketHandler.send(authSocketMessage);
+    EventEmitter.on(CustomEventName.SOCKET_MSG_RECEIVED, authResponseHandler);
+    socketHandler.send(authRequest);
   };
 
   public static logoutHandler = (): void => {
     const authData = SessionStorage.getAuthData();
 
     if (authData) {
-      const logoutSocketMessage = createSocketMessage({ user: authData }, SocketMessageType.LOGOUT_CURRENT);
-      const logoutReceiveHandler = AuthController.createLogoutReceiveHandler(logoutSocketMessage);
+      const logoutRequest = createSocketMessage({ user: authData }, SocketMessageType.LOGOUT_CURRENT);
+      const logoutResponseHandler = AuthController.createLogoutResponseHandler(logoutRequest);
 
-      EventEmitter.on(CustomEventName.SOCKET_MSG_RECEIVED, logoutReceiveHandler);
-      socketHandler.send(logoutSocketMessage);
+      EventEmitter.on(CustomEventName.SOCKET_MSG_RECEIVED, logoutResponseHandler);
+      socketHandler.send(logoutRequest);
     }
   };
 
@@ -41,12 +42,12 @@ export default class AuthController {
     }
   };
 
-  private static createAuthReceiveHandler = (authSocketMessage: SocketMessage): ((msg: SocketMessage) => void) =>
-    function authReceiveHandler(receivedMessage: SocketMessage) {
-      if (receivedMessage.id === authSocketMessage.id) {
+  private static createAuthResponseHandler = (authRequest: SocketMessage): ((msg: SocketMessage) => void) =>
+    function authReceiveHandler(response: SocketMessage) {
+      if (response.id === authRequest.id) {
         EventEmitter.off(CustomEventName.SOCKET_MSG_RECEIVED, authReceiveHandler);
 
-        if (receivedMessage.type === SocketMessageType.ERROR) {
+        if (response.type === SocketMessageType.ERROR) {
           if (SessionStorage.getAuthData()) {
             SessionStorage.clearAppData();
             setTimeout(
@@ -63,9 +64,9 @@ export default class AuthController {
             window.location.hash = `#${Page.LOGIN}`;
           }
 
-          EventEmitter.emit(CustomEventName.MODAL_ERROR, receivedMessage.payload?.error);
+          EventEmitter.emit(CustomEventName.MODAL_ERROR, response.payload?.error);
         } else {
-          const authData = authSocketMessage.payload?.user;
+          const authData = authRequest.payload?.user;
 
           if (authData) {
             SessionStorage.setAuthData(authData);
@@ -73,18 +74,20 @@ export default class AuthController {
             if (window.location.hash === `#${Page.LOGIN}`) {
               window.location.hash = `#${Page.CHAT}`;
             }
+
+            ContactsController.contactsRequestHandler();
           }
         }
       }
     };
 
-  private static createLogoutReceiveHandler = (logoutSocketMessage: SocketMessage): ((msg: SocketMessage) => void) =>
-    function logoutReceiveHandler(receivedMessage: SocketMessage) {
-      if (receivedMessage.id === logoutSocketMessage.id) {
+  private static createLogoutResponseHandler = (logoutRequest: SocketMessage): ((msg: SocketMessage) => void) =>
+    function logoutReceiveHandler(response: SocketMessage) {
+      if (response.id === logoutRequest.id) {
         EventEmitter.off(CustomEventName.SOCKET_MSG_RECEIVED, logoutReceiveHandler);
 
-        if (receivedMessage.type === SocketMessageType.ERROR) {
-          EventEmitter.emit(CustomEventName.MODAL_ERROR, receivedMessage.payload?.error);
+        if (response.type === SocketMessageType.ERROR) {
+          EventEmitter.emit(CustomEventName.MODAL_ERROR, response.payload?.error);
         } else {
           SessionStorage.clearAppData();
           window.location.hash = `#${Page.LOGIN}`;
