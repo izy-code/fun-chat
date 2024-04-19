@@ -1,3 +1,6 @@
+import type SocketMessageType from '../enums';
+import type { Payload, SocketMessage } from '../interfaces';
+
 type ConstructorOf<T> = { new (...args: unknown[]): T; prototype: T };
 
 export function assertIsDefined<T>(value: T): asserts value is NonNullable<T> {
@@ -43,3 +46,9 @@ export const getClosestFromEventTarget = (evt: Event | Touch, closestSelectors: 
 
   return target.closest(closestSelectors);
 };
+
+export const createSocketMessage = (payload: Payload, type: SocketMessageType): SocketMessage => ({
+  id: crypto.randomUUID(),
+  type,
+  payload,
+});
