@@ -24,7 +24,8 @@ export default class EventEmitter {
 
     for (let i = 0; i < currentEventHandlers.length; i += 1) {
       if (currentEventHandlers[i] === handler) {
-        currentEventHandlers.splice((i -= 1), 1);
+        currentEventHandlers.splice(i, 1);
+        i -= 1;
       }
     }
   }
