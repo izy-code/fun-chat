@@ -26,6 +26,12 @@
   line-height: inherit;
   border: 1px solid $color-black-olive;
   border-radius: 5px;
+
+  @include media-hover {
+    &:hover {
+      outline: 1px solid $color-black-olive;
+    }
+  }
 }
 
 .chat-page__contacts-list {

@@ -19,7 +19,7 @@
 
   &:hover {
     @include media-hover {
-      border-color: $color-black-olive;
+      outline: 1px solid $color-black-olive;
     }
   }
 
