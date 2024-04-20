@@ -7,6 +7,9 @@ import SessionStorage from './session-storage';
 import EventEmitter from './event-emitter';
 import SocketHandler from './socket-handler';
 import ContactsController from './contacts-controller';
+import State from './state';
+
+const MODAL_SHOW_DELAY_MS = 600;
 
 const socketHandler = SocketHandler.getInstance();
 
@@ -49,14 +52,10 @@ export default class AuthController {
 
         if (response.type === SocketMessageType.ERROR) {
           if (SessionStorage.getAuthData()) {
-            SessionStorage.clearAppData();
+            AuthController.handleInfoClear();
             setTimeout(
-              () =>
-                EventEmitter.emit(
-                  CustomEventName.MODAL_ERROR,
-                  'After tab duplication, you need to log\u00A0in again.\nTwo clients cannot have the\u00A0same\u00A0login.',
-                ),
-              600,
+              () => EventEmitter.emit(CustomEventName.MODAL_ERROR, response.payload?.error),
+              MODAL_SHOW_DELAY_MS,
             );
           }
 
@@ -89,11 +88,17 @@ export default class AuthController {
         if (response.type === SocketMessageType.ERROR) {
           EventEmitter.emit(CustomEventName.MODAL_ERROR, response.payload?.error);
         } else {
-          SessionStorage.clearAppData();
+          AuthController.handleInfoClear();
           window.location.hash = `#${Page.LOGIN}`;
         }
       }
     };
+
+  private static handleInfoClear = (): void => {
+    SessionStorage.clearAppData();
+    State.clearUnsentData();
+    State.clear();
+  };
 }
 
 EventEmitter.on(CustomEventName.SOCKET_STATE_CHANGE, AuthController.socketOpenedHandler);
