@@ -30,7 +30,7 @@ export default class ContactsController {
         State.setContactData(userData.login, { isOnline: userData.isLogined! });
       }
 
-      EventEmitter.emit(CustomEventName.UPDATE_CONTACTS);
+      EventEmitter.emit(CustomEventName.CONTACTS_UPDATED);
     }
   };
 
@@ -47,7 +47,7 @@ export default class ContactsController {
           }
         });
 
-        EventEmitter.emit(CustomEventName.UPDATE_CONTACTS);
+        EventEmitter.emit(CustomEventName.CONTACTS_UPDATED);
       }
     };
 }

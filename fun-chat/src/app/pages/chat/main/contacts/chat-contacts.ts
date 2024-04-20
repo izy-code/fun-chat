@@ -19,12 +19,12 @@ export default class ChatContactsComponent extends BaseComponent {
 
     this.appendChildren([this.search, this.list]);
 
-    EventEmitter.on(CustomEventName.UPDATE_CONTACTS, this.updateContacts);
+    EventEmitter.on(CustomEventName.CONTACTS_UPDATED, this.updateContacts);
     this.search.addListener('input', this.updateContacts);
     window.addEventListener(
       'popstate',
       () => {
-        EventEmitter.off(CustomEventName.UPDATE_CONTACTS, this.updateContacts);
+        EventEmitter.off(CustomEventName.CONTACTS_UPDATED, this.updateContacts);
       },
       { once: true },
     );
