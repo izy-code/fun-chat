@@ -1,5 +1,4 @@
 import './login-page.scss';
-import type BaseComponent from '@/app/components/base-component';
 import { a, form, h1, main } from '@/app/components/tags';
 import ButtonComponent from '@/app/components/button/button';
 import LoginFieldComponent from './login-field/login-field';
@@ -33,32 +32,24 @@ const PASSWORD_VAL_SWITCH = {
 };
 
 export default class LoginPageComponent extends PageComponent {
-  private loginButton: BaseComponent<HTMLButtonElement>;
+  private loginField = new LoginFieldComponent('Login:', 'text');
 
-  private loginField: LoginFieldComponent;
+  private passwordField = new LoginFieldComponent('Password:', 'password');
 
-  private passwordField: LoginFieldComponent;
+  private loginButton = ButtonComponent({
+    className: 'login-page__submit-button button',
+    textContent: 'Login',
+    buttonType: 'submit',
+  });
 
   constructor(router: Router) {
     super(router);
 
     this.addClass('login-page');
 
-    this.loginField = new LoginFieldComponent('Login:');
-    this.loginField.addClass('login-page__field');
-    this.loginField.setInputAttribute('autofocus', '');
-    this.loginField.setInputAttribute('autocomplete', 'username');
-    this.loginField.addListener('input', this.onFieldInput.bind(this));
-    this.passwordField = new LoginFieldComponent('Password:');
-    this.passwordField.addClass('login-page__field');
-    this.passwordField.setInputAttribute('autocomplete', 'current-password');
-    this.passwordField.addListener('input', this.onFieldInput.bind(this));
-    this.loginButton = ButtonComponent({
-      className: 'login-page__submit-button button',
-      textContent: 'Login',
-      buttonType: 'submit',
-      clickHandler: this.onLoginButtonClick,
-    });
+    this.initFields();
+
+    this.loginButton.addListener('click', this.onLoginButtonClick);
     this.loginButton.setAttribute('disabled', '');
 
     const aboutLink = a({
@@ -77,7 +68,20 @@ export default class LoginPageComponent extends PageComponent {
     const mainComponent = main({ className: 'login-page__main' }, headingComponent, formComponent);
     const modal = new ModalComponent();
 
+    formComponent.setAttribute('autocomplete', 'on');
+
     this.appendChildren([mainComponent, modal]);
+  }
+
+  private initFields(): void {
+    this.loginField.addClass('login-page__field');
+    this.loginField.setInputAttribute('autofocus', '');
+    this.loginField.setInputAttribute('autocomplete', 'username');
+    this.loginField.addListener('input', this.onFieldInput.bind(this));
+
+    this.passwordField.addClass('login-page__field');
+    this.passwordField.setInputAttribute('autocomplete', 'current-password');
+    this.passwordField.addListener('input', this.onFieldInput.bind(this));
   }
 
   private onFieldInput(evt: Event): void {

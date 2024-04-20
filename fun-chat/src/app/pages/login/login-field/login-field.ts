@@ -7,12 +7,10 @@ export default class LoginFieldComponent extends BaseComponent<HTMLLabelElement>
 
   private input: BaseComponent<HTMLInputElement>;
 
-  constructor(textContent: string) {
-    super({ className: 'login-field', tag: 'label', textContent });
+  constructor(textContent: string, inputType: string) {
+    super({ className: 'login-field', tag: 'label' });
 
-    const hyphenatedName = textContent.toLowerCase().split(' ').join('-');
-
-    this.input = input({ className: 'login-field__input', name: hyphenatedName, type: 'text', required: true });
+    this.input = input({ className: 'login-field__input', type: inputType, required: true });
     this.errorText = span({ className: 'login-field__error-text' });
 
     this.appendChildren([this.input, this.errorText]);
