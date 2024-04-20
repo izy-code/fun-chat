@@ -1,3 +1,4 @@
+@use "sass:color";
 @use "../../../../../global-styles/forward" as *;
 
 .chat-page__contacts {
@@ -51,6 +52,12 @@
   gap: 5px;
   align-items: center;
   cursor: pointer;
+
+  @include media-hover {
+    &:hover {
+      background-color: color.adjust($color-granite, $alpha: -0.8);
+    }
+  }
 }
 
 .chat-page__contact-indicator {
