@@ -4,7 +4,11 @@ enum CustomEventName {
   SOCKET_MSG_RECEIVED = 'socketMsgReceived',
   MODAL_ERROR = 'modalError',
   CONTACTS_UPDATED = 'contactsUpdated',
-  CONTACT_SELECTED = 'contactSelected',
+
+  CONTACT_SELECTION_CLICK = 'contactSelectionClick',
+
+  SELECTED_LOGIN_CHANGED = 'selectedLoginChanged',
+  SELECTED_ACTIVITY_CHANGED = 'selectedActivityChanged',
 }
 
 export default CustomEventName;

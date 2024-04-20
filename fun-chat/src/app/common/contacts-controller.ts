@@ -7,10 +7,15 @@ import SessionStorage from './session-storage';
 import SocketHandler from './socket-handler';
 import State from './state';
 
+const NEEDED_USERS_RESPONSES = 2;
+
 const socketHandler = SocketHandler.getInstance();
+let usersResponseCount = 0;
 
 export default class ContactsController {
   public static contactsRequestHandler = (): void => {
+    usersResponseCount = 0;
+
     const activeUsersRequest = createSocketMessage(null, SocketMessageType.ACTIVE_USERS);
     const inactiveUsersRequest = createSocketMessage(null, SocketMessageType.INACTIVE_USERS);
     const activeUsersHandler = ContactsController.createUsersResponseHandler(activeUsersRequest);
@@ -28,6 +33,10 @@ export default class ContactsController {
 
       if (userData) {
         State.setContactData(userData.login, { isOnline: userData.isLogined! });
+
+        if (userData.login === State.getSelectedContact()) {
+          State.setSelectedContactActivity(userData.isLogined!);
+        }
       }
 
       EventEmitter.emit(CustomEventName.CONTACTS_UPDATED);
@@ -48,8 +57,18 @@ export default class ContactsController {
         });
 
         EventEmitter.emit(CustomEventName.CONTACTS_UPDATED);
+        usersResponseCount += 1;
+
+        if (usersResponseCount === NEEDED_USERS_RESPONSES) {
+          ContactsController.contactSelectionHandler(State.getSelectedContact());
+        }
       }
     };
+
+  public static contactSelectionHandler = (login: string | null): void => {
+    State.setSelectedContact(login);
+  };
 }
 
 EventEmitter.on(CustomEventName.SOCKET_MSG_RECEIVED, ContactsController.externalUserHandler);
+EventEmitter.on(CustomEventName.CONTACT_SELECTION_CLICK, ContactsController.contactSelectionHandler);

@@ -40,8 +40,3 @@ export interface ContactData {
   unreadMessagesCount?: number;
   messages?: Message[];
 }
-
-export interface UnsentData {
-  login: string;
-  unsentMessage: string;
-}

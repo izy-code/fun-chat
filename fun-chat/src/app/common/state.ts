@@ -5,13 +5,15 @@ import EventEmitter from './event-emitter';
 export default class State {
   private static isSocketOpened = false;
 
+  private static selectedContact: string | null = null;
+
+  private static isSelectedContactOnline = false;
+
   private static sentSocketMessages = new Array<SocketMessage>();
 
   private static receivedSocketMessages = new Array<SocketMessage>();
 
   private static contactsData = new Map<string, ContactData>();
-
-  private static unsentData = new Map<string, string>();
 
   public static getContactsData = (): Map<string, ContactData> => State.contactsData;
 
@@ -43,9 +45,30 @@ export default class State {
     State.contactsData.clear();
     State.sentSocketMessages = [];
     State.receivedSocketMessages = [];
+    State.selectedContact = null;
+    State.isSelectedContactOnline = false;
   };
 
-  public static clearUnsentData = (): void => {
-    State.unsentData.clear();
+  public static setSelectedContact = (login: string | null): void => {
+    const startingState = State.selectedContact;
+
+    if (State.selectedContact && !State.contactsData.has(State.selectedContact)) {
+      State.selectedContact = null;
+    } else {
+      State.selectedContact = login;
+    }
+
+    if (State.selectedContact !== startingState) {
+      EventEmitter.emit(CustomEventName.SELECTED_LOGIN_CHANGED, State.selectedContact);
+    }
   };
+
+  public static getSelectedContact = (): string | null => State.selectedContact;
+
+  public static setSelectedContactActivity = (isOnline: boolean): void => {
+    this.isSelectedContactOnline = isOnline;
+    EventEmitter.emit(CustomEventName.SELECTED_ACTIVITY_CHANGED, isOnline);
+  };
+
+  public static getSelectedContactActivity = (): boolean => State.isSelectedContactOnline;
 }

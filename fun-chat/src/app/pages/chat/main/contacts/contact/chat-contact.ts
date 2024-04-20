@@ -2,8 +2,6 @@ import BaseComponent from '@/app/components/base-component';
 import { div, span } from '@/app/components/tags';
 
 export default class ChatContactComponent extends BaseComponent<HTMLLIElement> {
-  public isSelected = false;
-
   public isOnline = false;
 
   public count = 0;
@@ -20,6 +18,8 @@ export default class ChatContactComponent extends BaseComponent<HTMLLIElement> {
     const indicatorComponent = div({ className: 'chat-page__contact-indicator' });
     const loginComponent = span({ className: 'chat-page__contact-name', textContent: login });
     const counterComponent = span({ className: 'chat-page__contact-counter', textContent: count.toString() });
+
+    this.setAttribute('data-login', login);
 
     if (this.isOnline) {
       indicatorComponent.addClass('chat-page__contact-indicator--online');

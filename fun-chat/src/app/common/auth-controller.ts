@@ -96,7 +96,6 @@ export default class AuthController {
 
   private static handleInfoClear = (): void => {
     SessionStorage.clearAppData();
-    State.clearUnsentData();
     State.clear();
   };
 }

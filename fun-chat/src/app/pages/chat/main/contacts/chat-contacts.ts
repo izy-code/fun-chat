@@ -5,6 +5,7 @@ import { input, ul } from '@/app/components/tags';
 import ChatContactComponent from './contact/chat-contact';
 import EventEmitter from '@/app/common/event-emitter';
 import CustomEventName from '@/app/custom-events';
+import { getClosestFromEventTarget } from '@/app/utils/helpers';
 
 export default class ChatContactsComponent extends BaseComponent {
   public list: BaseComponent<HTMLUListElement>;
@@ -29,6 +30,7 @@ export default class ChatContactsComponent extends BaseComponent {
       { once: true },
     );
 
+    this.addContactSelectionHandler();
     this.updateContacts();
   }
 
@@ -56,5 +58,19 @@ export default class ChatContactsComponent extends BaseComponent {
 
     this.list.removeChildren();
     this.list.appendChildren(sortedContacts);
+  };
+
+  private addContactSelectionHandler = (): void => {
+    this.addListener('click', (evt) => {
+      const closestContact = getClosestFromEventTarget(evt, '.chat-page__contact');
+      const closestSearch = getClosestFromEventTarget(evt, '.chat-page__search');
+
+      if (!closestContact && !closestSearch) {
+        EventEmitter.emit(CustomEventName.CONTACT_SELECTION_CLICK, null);
+      } else if (closestContact) {
+        const login = closestContact.getAttribute('data-login');
+        EventEmitter.emit(CustomEventName.CONTACT_SELECTION_CLICK, login);
+      }
+    });
   };
 }
