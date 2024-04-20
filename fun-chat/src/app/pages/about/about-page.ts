@@ -33,7 +33,7 @@ export default class AboutPageComponent extends PageComponent {
       className: 'about-page__return-button button button--continue',
       textContent: `Return to previous page`,
       buttonType: 'button',
-      clickHandler: this.onReturnButtonClick,
+      clickHandler: AboutPageComponent.onReturnButtonClick,
     });
 
     const mainComponent = main({ className: 'about-page__main' }, heading, description, gitLink, returnLink);
@@ -43,11 +43,11 @@ export default class AboutPageComponent extends PageComponent {
     this.appendChildren([mainComponent, modal]);
   }
 
-  private onReturnButtonClick = (): void => {
+  private static onReturnButtonClick = (): void => {
     if (SessionStorage.getAuthData()) {
-      this.router.navigate(`#${Pages.CHAT}`);
+      window.location.hash = `#${Pages.CHAT}`;
     } else {
-      this.router.navigate(`#${Pages.LOGIN}`);
+      window.location.hash = `#${Pages.LOGIN}`;
     }
   };
 }
