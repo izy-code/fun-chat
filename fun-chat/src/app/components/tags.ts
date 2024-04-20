@@ -75,3 +75,9 @@ export const th = (props: TagProps, ...children: ChildrenType[]): BaseComponent<
 
 export const td = (props: TagProps, ...children: ChildrenType[]): BaseComponent<HTMLTableCellElement> =>
   new BaseComponent({ ...props, tag: 'td' }, ...children);
+
+export const ul = (props: TagProps, ...children: ChildrenType[]): BaseComponent<HTMLUListElement> =>
+  new BaseComponent({ ...props, tag: 'ul' }, ...children);
+
+export const li = (props: TagProps, ...children: ChildrenType[]): BaseComponent<HTMLLIElement> =>
+  new BaseComponent({ ...props, tag: 'li' }, ...children);

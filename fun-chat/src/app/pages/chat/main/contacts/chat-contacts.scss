@@ -1,0 +1,79 @@
+@use "../../../../../global-styles/forward" as *;
+
+.chat-page__contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  line-height: 1.2;
+
+  @media (width <= 600px) {
+    font-size: 16px;
+  }
+
+  @media (width <= 520px) {
+    font-size: 14px;
+  }
+
+  @media (width <= 380px) {
+    font-size: 13px;
+  }
+}
+
+.chat-page__search {
+  width: 100%;
+  padding: 5px;
+  font-size: inherit;
+  line-height: inherit;
+  border: 1px solid $color-black-olive;
+  border-radius: 5px;
+}
+
+.chat-page__contacts-list {
+  @include list-reset;
+
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 8px;
+  overflow-x: visible;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.chat-page__contact {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.chat-page__contact-indicator {
+  flex-shrink: 0;
+  width: 7px;
+  height: 7px;
+  background-color: $color-red;
+  border: 1px solid $color-black-olive;
+  border-radius: 50%;
+
+  &--online {
+    background-color: $color-green;
+  }
+}
+
+.chat-page__contact-name {
+  overflow: hidden;
+  margin: 0;
+  margin-right: auto;
+  text-overflow: ellipsis;
+}
+
+.chat-page__contact-counter {
+  display: none;
+  padding: 2px 4px;
+  border: 1px solid $color-dark-green;
+  border-radius: 8px;
+
+  &--shown {
+    display: block;
+  }
+}

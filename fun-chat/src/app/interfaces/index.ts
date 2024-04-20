@@ -34,3 +34,14 @@ export interface SocketMessage {
   type: SocketMessageType;
   payload: Payload | null;
 }
+
+export interface ContactData {
+  isOnline: boolean;
+  unreadMessagesCount?: number;
+  messages?: Message[];
+}
+
+export interface UnsentData {
+  login: string;
+  unsentMessage: string;
+}

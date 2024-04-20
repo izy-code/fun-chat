@@ -6,9 +6,10 @@
   gap: 10px;
   align-items: center;
   width: 100%;
+  min-height: 0;
 }
 
-.chat-page__users,
+.chat-page__contacts,
 .chat-page__dialogue {
   height: 100%;
   padding: 10px 20px;
@@ -17,12 +18,12 @@
   box-shadow: 0 5px 10px 10px rgb(0 0 0 / 20%);
 
   @media (width <= 520px) {
-    padding: 10px;
+    padding: 5px;
   }
 }
 
-.chat-page__users {
-  width: 35%;
+.chat-page__contacts {
+  width: 37%;
 }
 
 .chat-page__dialogue {

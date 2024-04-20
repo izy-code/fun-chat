@@ -1,13 +1,17 @@
 @use "../global-styles/forward" as *;
 
+:root {
+  --page-padding: 20px;
+
+  @media (width <= 520px) {
+    --page-padding: 10px;
+  }
+}
+
 .app-container {
   display: grid;
   min-height: 100svh;
-  padding: 20px;
-
-  @media (width <= 520px) {
-    padding: 10px;
-  }
+  padding: var(--page-padding);
 }
 
 .app-container__page {
