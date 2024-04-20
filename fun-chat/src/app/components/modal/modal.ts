@@ -33,6 +33,14 @@ export default class ModalComponent extends BaseComponent {
 
     EventEmitter.on(CustomEventName.SOCKET_STATE_CHANGE, this.onSocketDisconnect);
     EventEmitter.on(CustomEventName.MODAL_ERROR, this.onAuthError);
+    window.addEventListener(
+      'popstate',
+      () => {
+        EventEmitter.off(CustomEventName.SOCKET_STATE_CHANGE, this.onSocketDisconnect);
+        EventEmitter.off(CustomEventName.MODAL_ERROR, this.onAuthError);
+      },
+      { once: true },
+    );
   }
 
   private onSocketDisconnect = (isSocketOpened: boolean): void => {
