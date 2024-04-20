@@ -47,7 +47,7 @@ export const getClosestFromEventTarget = (evt: Event | Touch, closestSelectors: 
   return target.closest(closestSelectors);
 };
 
-export const createSocketMessage = (payload: Payload, type: SocketMessageType): SocketMessage => ({
+export const createSocketMessage = (payload: Payload | null, type: SocketMessageType): SocketMessage => ({
   id: crypto.randomUUID(),
   type,
   payload,
