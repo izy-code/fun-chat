@@ -60,10 +60,14 @@ export default class State {
 
     if (State.selectedContact !== startingState) {
       EventEmitter.emit(CustomEventName.SELECTED_LOGIN_CHANGED, State.selectedContact);
+
+      if (State.selectedContact) {
+        State.setSelectedContactActivity(State.contactsData.get(State.selectedContact)!.isOnline);
+      }
     }
   };
 
-  public static getSelectedContact = (): string | null => State.selectedContact;
+  public static getSelectedContactLogin = (): string | null => State.selectedContact;
 
   public static setSelectedContactActivity = (isOnline: boolean): void => {
     this.isSelectedContactOnline = isOnline;

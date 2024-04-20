@@ -1,14 +1,14 @@
 import './chat-main.scss';
 import BaseComponent from '@/app/components/base-component';
-import { section } from '@/app/components/tags';
 import ChatContactsComponent from './contacts/chat-contacts';
+import ChatDialogueComponent from './dialogue/chat-dialogue';
 
 export default class ChatMainComponent extends BaseComponent {
   constructor() {
     super({ className: 'chat-page__main', tag: 'main' });
 
     const users = new ChatContactsComponent();
-    const dialogue = section({ className: 'chat-page__dialogue' });
+    const dialogue = new ChatDialogueComponent();
 
     this.appendChildren([users, dialogue]);
   }

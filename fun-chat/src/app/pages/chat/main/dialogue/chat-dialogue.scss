@@ -1,0 +1,53 @@
+@use "sass:color";
+@use "../../../../../global-styles/forward" as *;
+
+.dialogue {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+  line-height: 1.2;
+
+  @media (width <= 600px) {
+    font-size: 16px;
+  }
+
+  @media (width <= 520px) {
+    font-size: 14px;
+  }
+
+  @media (width <= 380px) {
+    font-size: 13px;
+  }
+}
+
+.dialogue__header {
+  display: flex;
+  gap: 10px;
+  justify-content: space-around;
+  padding: 0 8px 8px;
+  border-bottom: 1px solid $color-black-olive;
+
+  @media (width <= 600px) {
+    padding: 0 0 3px;
+  }
+}
+
+.dialogue__login {
+  overflow: hidden;
+  margin: 0;
+  text-overflow: ellipsis;
+}
+
+.dialogue__activity {
+  margin: 0;
+  color: $color-red;
+
+  &--online {
+    color: $color-green;
+  }
+
+  &--hidden {
+    display: none;
+  }
+}

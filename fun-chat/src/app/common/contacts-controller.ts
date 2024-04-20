@@ -34,7 +34,7 @@ export default class ContactsController {
       if (userData) {
         State.setContactData(userData.login, { isOnline: userData.isLogined! });
 
-        if (userData.login === State.getSelectedContact()) {
+        if (userData.login === State.getSelectedContactLogin()) {
           State.setSelectedContactActivity(userData.isLogined!);
         }
       }
@@ -60,7 +60,7 @@ export default class ContactsController {
         usersResponseCount += 1;
 
         if (usersResponseCount === NEEDED_USERS_RESPONSES) {
-          ContactsController.contactSelectionHandler(State.getSelectedContact());
+          ContactsController.contactSelectionHandler(State.getSelectedContactLogin());
         }
       }
     };
