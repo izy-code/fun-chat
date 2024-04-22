@@ -1,6 +1,8 @@
 import CustomEventName from '../custom-events';
-import type { ContactData, SocketMessage } from '../interfaces';
+import type { ContactData, Message } from '../interfaces';
+import deepMerge from '../utils/deep-merge';
 import EventEmitter from './event-emitter';
+import SessionStorage from './session-storage';
 
 export default class State {
   private static isSocketOpened = false;
@@ -9,28 +11,31 @@ export default class State {
 
   private static isSelectedContactOnline = false;
 
-  private static sentSocketMessages = new Array<SocketMessage>();
-
-  private static receivedSocketMessages = new Array<SocketMessage>();
-
   private static contactsData = new Map<string, ContactData>();
 
   public static getContactsData = (): Map<string, ContactData> => State.contactsData;
+
+  public static getSelectedContactData = (): ContactData | null => {
+    if (State.selectedContact) {
+      return State.contactsData.get(State.selectedContact) || null;
+    }
+
+    return null;
+  };
+
+  public static getSelectedContactLogin = (): string | null => State.selectedContact;
+
+  public static setSelectedContactActivity = (isOnline: boolean): void => {
+    this.isSelectedContactOnline = isOnline;
+    EventEmitter.emit(CustomEventName.SELECTED_ACTIVITY_CHANGED, isOnline);
+  };
+
+  public static getSelectedContactActivity = (): boolean => State.isSelectedContactOnline;
 
   public static changeSocketState = (isOpened: boolean): void => {
     State.isSocketOpened = isOpened;
     State.clear();
     EventEmitter.emit(CustomEventName.SOCKET_STATE_CHANGE, isOpened);
-  };
-
-  public static saveSentMessage = (message: SocketMessage): void => {
-    State.sentSocketMessages.push(message);
-    EventEmitter.emit(CustomEventName.SOCKET_MSG_SENT, message);
-  };
-
-  public static saveReceivedMessage = (message: SocketMessage): void => {
-    State.receivedSocketMessages.push(message);
-    EventEmitter.emit(CustomEventName.SOCKET_MSG_RECEIVED, message);
   };
 
   public static setContactData = (login: string, data: ContactData): void => {
@@ -43,8 +48,6 @@ export default class State {
 
   public static clear = (): void => {
     State.contactsData.clear();
-    State.sentSocketMessages = [];
-    State.receivedSocketMessages = [];
     State.selectedContact = null;
     State.isSelectedContactOnline = false;
   };
@@ -67,12 +70,77 @@ export default class State {
     }
   };
 
-  public static getSelectedContactLogin = (): string | null => State.selectedContact;
+  public static saveMessage = (login: string, savedMessage: Message): void => {
+    const contactData = State.contactsData.get(login);
 
-  public static setSelectedContactActivity = (isOnline: boolean): void => {
-    this.isSelectedContactOnline = isOnline;
-    EventEmitter.emit(CustomEventName.SELECTED_ACTIVITY_CHANGED, isOnline);
+    if (contactData) {
+      const { messages } = contactData;
+      const insertionIndex = messages?.findIndex((msg) => msg.datetime! > savedMessage.datetime!);
+
+      if (insertionIndex !== -1) {
+        messages?.splice(insertionIndex!, 0, savedMessage);
+      } else {
+        messages?.push(savedMessage);
+      }
+
+      if (savedMessage.status?.isReaded === false && savedMessage.to === SessionStorage.getAuthData()?.login) {
+        contactData.unreadMessagesCount! += 1;
+        EventEmitter.emit(CustomEventName.CONTACTS_UPDATED);
+      }
+    }
+
+    if (login === State.selectedContact) {
+      EventEmitter.emit(CustomEventName.MSG_CONTENT_UPDATED);
+    }
   };
 
-  public static getSelectedContactActivity = (): boolean => State.isSelectedContactOnline;
+  public static updateMessageStatus = (updateMsgData: Message): void => {
+    const contactsDataKeys = Object.keys(State.contactsData);
+
+    for (let i = 0; i < contactsDataKeys.length; i += 1) {
+      const login = contactsDataKeys[i]!;
+      const contactData = State.contactsData.get(login)!;
+      const messages = contactData.messages || [];
+
+      for (let j = 0; j < messages.length; j += 1) {
+        const foundMsg = messages[j]!;
+
+        if (foundMsg.id === updateMsgData.id) {
+          deepMerge(foundMsg, updateMsgData);
+
+          if (foundMsg.status?.isReaded !== updateMsgData.status?.isReaded) {
+            contactData.unreadMessagesCount! += updateMsgData.status?.isReaded ? -1 : 1;
+            EventEmitter.emit(CustomEventName.CONTACTS_UPDATED);
+          }
+
+          if (login === State.selectedContact) {
+            EventEmitter.emit(CustomEventName.MSG_CONTENT_UPDATED);
+          }
+
+          return;
+        }
+      }
+    }
+  };
+
+  public static refillContactMsgHistory = (login: string, messages: Message[]): void => {
+    const contactData = State.contactsData.get(login);
+
+    if (contactData) {
+      const unreadMessagesCount = messages.filter(
+        (message) => !message.status?.isReaded && message.from === login,
+      ).length;
+
+      contactData.messages = messages;
+
+      if (unreadMessagesCount !== contactData.unreadMessagesCount) {
+        contactData.unreadMessagesCount = unreadMessagesCount;
+        EventEmitter.emit(CustomEventName.CONTACTS_UPDATED);
+      }
+    }
+
+    if (login === State.selectedContact) {
+      EventEmitter.emit(CustomEventName.MSG_CONTENT_UPDATED);
+    }
+  };
 }
