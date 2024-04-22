@@ -1,4 +1,5 @@
-import type SocketMessageType from '../enums';
+import State from '../common/state';
+import SocketMessageType from '../enums';
 import type { Payload, SocketMessage } from '../interfaces';
 
 type ConstructorOf<T> = { new (...args: unknown[]): T; prototype: T };
@@ -52,3 +53,34 @@ export const createSocketMessage = (payload: Payload | null, type: SocketMessage
   type,
   payload,
 });
+
+export const createMsgSendRequest = (message: string): SocketMessage =>
+  createSocketMessage(
+    {
+      message: {
+        to: State.getSelectedContactLogin(),
+        text: message,
+      },
+    },
+    SocketMessageType.MSG_SEND,
+  );
+
+export const createMsgFromUserRequest = (userLogin: string): SocketMessage =>
+  createSocketMessage(
+    {
+      user: {
+        login: userLogin,
+      },
+    },
+    SocketMessageType.MSG_FROM_USER,
+  );
+
+export const createMsgReadRequest = (messageId: string): SocketMessage =>
+  createSocketMessage(
+    {
+      message: {
+        id: messageId,
+      },
+    },
+    SocketMessageType.MSG_READ,
+  );
