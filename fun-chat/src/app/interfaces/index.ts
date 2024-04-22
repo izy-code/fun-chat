@@ -7,12 +7,12 @@ export interface User {
 }
 
 export interface Message {
-  id: string | null;
-  from: string | null;
-  to: string | null;
-  text: string;
-  datetime: number;
-  status: MessageStatus;
+  id?: string | null;
+  from?: string | null;
+  to?: string | null;
+  text?: string;
+  datetime?: number;
+  status?: MessageStatus;
 }
 
 export interface MessageStatus {
