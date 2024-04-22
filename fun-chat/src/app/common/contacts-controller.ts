@@ -2,6 +2,7 @@ import CustomEventName from '../custom-events';
 import SocketMessageType from '../enums';
 import type { SocketMessage } from '../interfaces';
 import { createSocketMessage } from '../utils/helpers';
+import DialogueController from './dialogue-controller';
 import EventEmitter from './event-emitter';
 import SessionStorage from './session-storage';
 import SocketHandler from './socket-handler';
@@ -52,15 +53,15 @@ export default class ContactsController {
 
         users.forEach((user) => {
           if (user.login !== SessionStorage.getAuthData()?.login) {
-            State.setContactData(user.login, { isOnline: user.isLogined! });
+            State.setContactData(user.login, { isOnline: user.isLogined!, unreadMessagesCount: 0, messages: [] });
           }
         });
 
-        EventEmitter.emit(CustomEventName.CONTACTS_UPDATED);
         usersResponseCount += 1;
 
         if (usersResponseCount === NEEDED_USERS_RESPONSES) {
           ContactsController.contactSelectionHandler(State.getSelectedContactLogin());
+          DialogueController.fetchAllUsersHistory();
         }
       }
     };
