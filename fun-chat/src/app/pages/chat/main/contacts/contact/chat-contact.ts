@@ -26,7 +26,7 @@ export default class ChatContactComponent extends BaseComponent<HTMLLIElement> {
     }
 
     if (this.count > 0) {
-      counterComponent.addClass('chat-page__contact-indicator--shown');
+      counterComponent.addClass('chat-page__contact-counter--shown');
     }
 
     this.appendChildren([indicatorComponent, loginComponent, counterComponent]);

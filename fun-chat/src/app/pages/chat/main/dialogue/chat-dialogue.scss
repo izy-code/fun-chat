@@ -4,6 +4,7 @@
 .dialogue {
   display: flex;
   flex-direction: column;
+  gap: 8px;
   min-width: 0;
   height: 100%;
   line-height: 1.2;
@@ -33,6 +34,7 @@
   overflow: hidden;
   margin: 0;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .dialogue__activity {
@@ -46,4 +48,58 @@
   &--hidden {
     display: none;
   }
+}
+
+.dialogue__content {
+  @include list-reset;
+
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  gap: 8px;
+  overflow-x: visible;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.dialogue__greeting {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+.dialogue__form {
+  display: flex;
+  gap: 4px;
+}
+
+.dialogue__input {
+  flex-grow: 1;
+  min-width: 0;
+  padding: 5px;
+  font-size: inherit;
+  line-height: inherit;
+  border: 1px solid $color-black-olive;
+  border-radius: 5px;
+
+  @include media-hover {
+    &:hover:not(:disabled) {
+      outline: 1px solid $color-black-olive;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+
+    &::placeholder {
+      opacity: 0;
+    }
+  }
+}
+
+.dialogue__button {
+  padding: 5px;
 }

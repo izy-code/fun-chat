@@ -6,9 +6,11 @@ enum CustomEventName {
   CONTACTS_UPDATED = 'contactsUpdated',
 
   CONTACT_SELECTION_CLICK = 'contactSelectionClick',
+  SEND_BTN_CLICK = 'sendBtnClick',
 
   SELECTED_LOGIN_CHANGED = 'selectedLoginChanged',
   SELECTED_ACTIVITY_CHANGED = 'selectedActivityChanged',
+  MSG_CONTENT_UPDATED = 'msgContentUpdated',
 }
 
 export default CustomEventName;
