@@ -1,4 +1,6 @@
+import CustomEventName from '../custom-events';
 import type { SocketMessage } from '../interfaces';
+import EventEmitter from './event-emitter';
 import State from './state';
 
 const BASE_URL = 'ws://127.0.0.1:4000';
@@ -19,15 +21,15 @@ export default class SocketHandler {
 
   public static getInstance = (): SocketHandler => SocketHandler.singleInstance;
 
-  public send = (message: SocketMessage): boolean => {
+  public send = (request: SocketMessage): boolean => {
     if (this.socket !== null && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(message));
-      State.saveSentMessage(message);
+      this.socket.send(JSON.stringify(request));
+      EventEmitter.emit(CustomEventName.SOCKET_MSG_SENT, request);
 
       return true;
     }
 
-    this.unsentMessages.push(message);
+    this.unsentMessages.push(request);
 
     if (!this.resendingIntervalId) {
       this.resendingIntervalId = this.setResendingInterval();
@@ -48,10 +50,10 @@ export default class SocketHandler {
   }
 
   private addListenersToOpenedSocket = (openedSocket: WebSocket): void => {
-    openedSocket.addEventListener('message', (message: MessageEvent<string>) => {
-      const parsedMessage = JSON.parse(message.data) as SocketMessage;
+    openedSocket.addEventListener('message', (response: MessageEvent<string>) => {
+      const parsedResponse = JSON.parse(response.data) as SocketMessage;
 
-      State.saveReceivedMessage(parsedMessage);
+      EventEmitter.emit(CustomEventName.SOCKET_MSG_RECEIVED, parsedResponse);
     });
     openedSocket.addEventListener('close', () => {
       State.changeSocketState(false);
