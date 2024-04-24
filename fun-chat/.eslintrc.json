@@ -20,6 +20,7 @@
     "es2022": true
   },
   "rules": {
+    "no-param-reassign": ["error", { "props": false }],
     "curly": ["error", "all"],
     "max-lines-per-function": ["error", 40],
     "@typescript-eslint/no-inferrable-types": "error",
@@ -65,5 +66,6 @@
     "import/parsers": {
       "@typescript-eslint/parser": [".ts"]
     }
-  }
+  },
+  "noInlineConfig": true
 }
