@@ -56,7 +56,7 @@ export default class SocketHandler {
       EventEmitter.emit(CustomEventName.SOCKET_MSG_RECEIVED, parsedResponse);
     });
     openedSocket.addEventListener('close', () => {
-      State.changeSocketState(false);
+      SocketHandler.handleSocketStateChange(false);
 
       this.initSocket();
     });
@@ -69,12 +69,17 @@ export default class SocketHandler {
       this.socket = socket;
       this.addListenersToOpenedSocket(socket);
 
-      State.changeSocketState(true);
+      SocketHandler.handleSocketStateChange(true);
     });
     socket.addEventListener('error', () => {
-      State.changeSocketState(false);
+      SocketHandler.handleSocketStateChange(false);
 
       this.initSocket();
     });
+  };
+
+  private static handleSocketStateChange = (isOpened: boolean): void => {
+    State.clear();
+    EventEmitter.emit(CustomEventName.SOCKET_STATE_CHANGE, isOpened);
   };
 }
