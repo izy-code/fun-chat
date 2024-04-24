@@ -71,6 +71,35 @@
   text-align: center;
 }
 
+.dialogue__divider {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  background-color: transparent;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    border-bottom: 1px solid $color-black-olive;
+  }
+}
+
+.dialogue__filler {
+  display: flex;
+  flex-grow: 1;
+}
+
+.dialogue__divider-text {
+  position: relative;
+  margin-inline: auto;
+  padding: 0 8px;
+  font-weight: bold;
+  background-color: $color-anti-flash-white;
+}
+
 .dialogue__form {
   display: flex;
   gap: 4px;
@@ -102,4 +131,30 @@
 
 .dialogue__button {
   padding: 5px;
+}
+
+.dialogue__close-button {
+  display: none;
+  padding-inline: 8px;
+
+  &--shown {
+    display: block;
+  }
+}
+
+.dialogue__popover {
+  position: absolute;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: fit-content;
+  margin: 0;
+  padding: 1%;
+  background: $color-anti-flash-white;
+  border: 1px solid $color-granite;
+  border-radius: 5px;
+  transform: translate(-50%, 0);
 }

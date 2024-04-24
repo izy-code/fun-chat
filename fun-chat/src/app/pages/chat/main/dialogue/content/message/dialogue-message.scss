@@ -2,6 +2,7 @@
 @use "../../../../../../../global-styles/forward" as *;
 
 .message-item {
+  position: relative;
   display: flex;
   justify-content: flex-start;
   width: 100%;
