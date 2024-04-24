@@ -15,7 +15,13 @@ export default class DialogueMessageComponent extends BaseComponent<HTMLLIElemen
     const fromContent = message.from === State.getSelectedContactLogin() ? message.from : 'You';
     const dateContent = new Date(message.datetime!).toLocaleString();
     const editedContent = message.status?.isEdited ? 'edited' : '';
-    const statusContent = message.status?.isReaded ? 'read' : 'delivered';
+    let statusContent = 'sent';
+
+    if (message.status?.isReaded) {
+      statusContent = 'read';
+    } else if (message.status?.isDelivered) {
+      statusContent = 'delivered';
+    }
 
     const from = span({ className: 'message-item__from', textContent: fromContent! });
     const time = span({ className: 'message-item__time', textContent: dateContent! });
@@ -34,5 +40,7 @@ export default class DialogueMessageComponent extends BaseComponent<HTMLLIElemen
     }
 
     this.append(container);
+
+    this.setAttribute('data-id', message.id!);
   }
 }
