@@ -84,3 +84,24 @@ export const createMsgReadRequest = (messageId: string): SocketMessage =>
     },
     SocketMessageType.MSG_READ,
   );
+
+export const createMsgDeleteRequest = (messageId: string): SocketMessage =>
+  createSocketMessage(
+    {
+      message: {
+        id: messageId,
+      },
+    },
+    SocketMessageType.MSG_DELETE,
+  );
+
+export const createMsgEditRequest = (messageId: string, editedText: string): SocketMessage =>
+  createSocketMessage(
+    {
+      message: {
+        id: messageId,
+        text: editedText,
+      },
+    },
+    SocketMessageType.MSG_EDIT,
+  );
